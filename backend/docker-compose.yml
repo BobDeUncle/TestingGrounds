@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ../testing-grounds
+    container_name: testing-grounds-frontend
+    ports:
+      - "5001:5000"
+    networks:
+      - testing-ground-network
+
+  backend:
+    build:
+      context: ./
+    container_name: testing-grounds-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/testingGroundsDB
+    depends_on:
+      - mongo
+    networks:
+      - testing-ground-network
+
+  mongo:
+    image: mongo:latest
+    container_name: testing-grounds-mongo
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - testing-ground-network
+
+networks:
+  testing-ground-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
